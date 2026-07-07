@@ -71,6 +71,7 @@ For more questions, join our [Discord server](https://discord.gg/ynabeAS4eD).
 - Diamond Hero
 - Holo
 - Mr. Hatsman/sonicdude143
+- somepersononthenet
 
 #### Music & Audio
 - skibidigurt
