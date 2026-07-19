@@ -1,9 +1,9 @@
-# showfloor
+# The YRG Project
 ![showfloorlogo](https://github.com/user-attachments/assets/255078c5-d31c-4284-a720-f1f2ddcefd4f)
 
 ## Introduction
 
-**showfloor** is a recreation of the Shoshinkai 1995 demo of Super Mario 64, based on [The Preservation Project](https://github.com/Sunlitspace542/tpp-mirror) (TPP). It aims to continue TPP's legacy with greater accuracy to the source material.
+**The YRG Project** is a extended version of backstage project. This aims to have save system, and featuring Luigi.
 
 ## Installation
 
@@ -44,6 +44,9 @@ make GRUCODE=f3d_20E
 For more questions, join our [Discord server](https://discord.gg/ynabeAS4eD).
 
 ## Credits
+
+### Owner of this Romhack
+- runnerboy51627 (yetrunnergamez)
 
 #### Main Programming
 - stalechilibeans
