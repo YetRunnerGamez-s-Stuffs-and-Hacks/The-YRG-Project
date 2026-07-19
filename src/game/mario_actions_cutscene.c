@@ -27,6 +27,7 @@
 #include "save_file.h"
 #include "seq_ids.h"
 #include "sound_init.h"
+#include "game/print.h"
 
 // unused
 UNUSED static void stub_is_textbox_active(u16 *arg) {
@@ -322,6 +323,24 @@ void general_star_dance_handler(struct MarioState *m) {
                     m->actionState = 1;
                 }
                 break;
+        }
+    } else if (m->actionState == 1) {
+        if (gDialogResponse != DIALOG_RESPONSE_NONE) {
+            if (gDialogResponse == DIALOG_RESPONSE_YES) {
+    char debugStr[32];
+
+    sprintf(debugStr, "BEFORE SAVE:%d",
+        save_file_get_total_star_count(gCurrSaveFileNum - 1,
+        COURSE_MIN - 1, COURSE_MAX - 1));
+
+    print_text(20, 40, debugStr);
+
+    save_file_do_save(gCurrSaveFileNum - 1);
+}
+
+            gDialogResponse = DIALOG_RESPONSE_NONE;
+            disable_time_stop();
+            level_trigger_warp(m, WARP_OP_STAR_EXIT);
         }
     }
 }
@@ -705,15 +724,40 @@ s32 act_exit_land_save_dialog(struct MarioState *m) {
     perform_ground_step(m);
     mario_set_forward_vel(m, m->forwardVel * 2);
     play_mario_landing_sound_once(m, SOUND_ACTION_TERRAIN_LANDING);
-    set_mario_animation(m,
-                        m->actionArg == 0 ? MARIO_ANIM_GENERAL_LAND : MARIO_ANIM_LAND_FROM_SINGLE_JUMP);
 
-    if (is_anim_past_frame(m, 11) || is_anim_past_frame(m, 24)) {
-        stationary_ground_step(m);
-    }
+    switch (m->actionState) {
+        case 0:
+            set_mario_animation(m,
+                m->actionArg == 0 ? MARIO_ANIM_GENERAL_LAND : MARIO_ANIM_LAND_FROM_SINGLE_JUMP);
 
-    if (is_anim_past_end(m)) {
+            if (is_anim_past_frame(m, 11) || is_anim_past_frame(m, 24)) {
+                stationary_ground_step(m);
+            }
+
+            if (is_anim_past_end(m)) {
+                print_text(20, 20, "COURSE COMPLETE TEST");
+
+                enable_time_stop();
+
+                create_dialog_box_with_response(DIALOG_014);
+
+                gSaveOptSelectIndex = MENU_OPT_NONE;
+
+                m->actionState = 1;
+            }
+            break;
+
+       case 1:
+    if (gDialogResponse != DIALOG_RESPONSE_NONE) {
+        if (gDialogResponse == DIALOG_RESPONSE_YES) {
+            save_file_do_save(gCurrSaveFileNum - 1);
+        }
+
+        gDialogResponse = DIALOG_RESPONSE_NONE;
+        disable_time_stop();
         set_mario_action(m, ACT_IDLE, 0);
+    }
+    break;
     }
 
     return FALSE;

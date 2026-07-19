@@ -14,6 +14,7 @@
 #include "seq_ids.h"
 #include "sm64.h"
 #include "title_screen.h"
+#include "menu/file_select.h"
 
 /**
  * @file title_screen.c
@@ -32,6 +33,7 @@ static char sLevelSelectStageNames[64][16] = {
 #undef DEFINE_LEVEL
 
 static s16 sPlayMarioGreeting = 0;
+static s16 sInFileSelect = FALSE;
 
 /**
  * Level select intro function, updates the selected stage
@@ -111,21 +113,40 @@ s32 intro_regular(void) {
         sPlayMarioGreeting++;
     }
 
+    // File select
+    if (sInFileSelect) {
+        s32 result;
+
+        file_select_draw();
+        result = file_select_update();
+
+        if (result == 1) {
+            sInFileSelect = FALSE;
+            return LEVEL_CASTLE_GROUNDS;
+        }
+
+        if (result == -1) {
+            sInFileSelect = FALSE;
+        }
+
+        return LEVEL_NONE;
+    }
+
     print_intro_text();
 
     if (gPlayer1Controller->buttonPressed & START_BUTTON) {
-        play_sound(SOUND_MENU_STAR_SOUND, gGlobalSoundSource);
-        // calls level ID 100 (or 101 adding level select bool value)
-        // defined in level_intro_mario_head_regular JUMP_IF commands
-        // 100 is File Select - 101 is Level Select
-        level = 100 + gDebugLevelSelect;
-        sPlayMarioGreeting = 0;
+    play_sound(SOUND_MENU_STAR_SOUND, gGlobalSoundSource);
 
-        save_file_create_temporary_file();
+    if (gDebugLevelSelect) {
+        return 101;
     }
-    return level;
+
+    file_select_init();
+    sInFileSelect = TRUE;
 }
 
+    return level;
+}
 /**
  * Game over intro function that handles Mario's game over voice and game start.
  */
@@ -139,7 +160,7 @@ s32 intro_game_over(void) {
  */
 s32 intro_play_its_a_me_mario(void) {
     set_background_music(SEQ_SOUND_PLAYER, 0);
-    play_sound(SOUND_GENERAL_COIN, gGlobalSoundSource);
+    play_sound(SOUND_GENERAL_RED_COIN, gGlobalSoundSource);
     return 1;
 }
 
@@ -148,21 +169,23 @@ s32 intro_play_its_a_me_mario(void) {
  * Returns a level ID after their criteria is met.
  */
 s32 lvl_intro_update(s16 arg, UNUSED s32 unusedArg) {
-    s32 retVar;
+    if (gDebugLevelSelect && arg == LVL_INTRO_REGULAR) {
+        return intro_level_select();
+    }
 
     switch (arg) {
         case LVL_INTRO_PLAY_ITS_A_ME_MARIO:
-            retVar = intro_play_its_a_me_mario();
-            break;
+            return intro_play_its_a_me_mario();
+
         case LVL_INTRO_REGULAR:
-            retVar = intro_regular();
-            break;
+            return intro_regular();
+
         case LVL_INTRO_GAME_OVER:
-            retVar = intro_regular();
-            break;
+            return intro_regular();
+
         case LVL_INTRO_LEVEL_SELECT:
-            retVar = intro_level_select();
-            break;
+            return intro_level_select();
     }
-    return retVar;
+
+    return LEVEL_NONE;
 }

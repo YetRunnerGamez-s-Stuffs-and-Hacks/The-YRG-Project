@@ -32,6 +32,10 @@ struct LandingAction sFreefallLandAction = {
     4, 5, ACT_FREEFALL, ACT_FREEFALL_LAND_STOP, ACT_DOUBLE_JUMP, ACT_FREEFALL, ACT_BEGIN_SLIDING,
 };
 
+struct LandingAction sLongJumpLandAction = {
+    6, 5, ACT_FREEFALL, ACT_LONG_JUMP_LAND_STOP, ACT_LONG_JUMP, ACT_FREEFALL, ACT_BEGIN_SLIDING,
+};
+
 struct LandingAction sSideFlipLandAction = {
     4, 5, ACT_FREEFALL, ACT_SIDE_FLIP_LAND_STOP, ACT_DOUBLE_JUMP, ACT_FREEFALL, ACT_BEGIN_SLIDING,
 };
@@ -1222,14 +1226,18 @@ s32 act_crouch_slide(struct MarioState *m) {
         m->actionTimer++;
         if (m->input & INPUT_A_PRESSED) {
             if (m->forwardVel > 10.0f) {
-                return set_jumping_action(m, ACT_JUMP, 0);
+                return set_jumping_action(m, ACT_LONG_JUMP, 0);
             }
         }
     }
 
-    /*if (m->input & INPUT_B_PRESSED) {
-        return set_mario_action(m, ACT_MOVE_PUNCHING, 0);
-    }*/
+//    if (m->input & INPUT_B_PRESSED) {
+//        if (m->forwardVel >= 10.0f) {
+//            return set_mario_action(m, ACT_SLIDE_KICK, 0);
+//        } else {
+//            return set_mario_action(m, ACT_MOVE_PUNCHING, 0x0009);
+//        }
+//    }
 
     if (m->input & INPUT_A_PRESSED) {
         return set_jumping_action(m, ACT_JUMP, 0);
@@ -1568,6 +1576,28 @@ s32 act_hold_freefall_land(struct MarioState *m) {
     return FALSE;
 }
 
+s32 act_long_jump_land(struct MarioState *m) {
+
+    if (!(m->input & INPUT_Z_DOWN)) {
+        m->input &= ~INPUT_A_PRESSED;
+    }
+
+    if (common_landing_cancels(m, &sLongJumpLandAction, set_jumping_action)) {
+        return TRUE;
+    }
+
+    if (!(m->input & INPUT_NONZERO_ANALOG)) {
+        play_sound_if_no_flag(m, SOUND_MARIO_UH2_2, MARIO_MARIO_SOUND_PLAYED);
+    }
+
+    common_landing_action(m,
+                          !m->marioObj->oMarioLongJumpIsSlow ? MARIO_ANIM_CROUCH_FROM_FAST_LONGJUMP
+                                                             : MARIO_ANIM_CROUCH_FROM_SLOW_LONGJUMP,
+                          ACT_FREEFALL);
+    return FALSE;
+}
+
+
 s32 act_double_jump_land(struct MarioState *m) {
     if (common_landing_cancels(m, &sDoubleJumpLandAction, set_triple_jump_action)) {
         return TRUE;
@@ -1637,6 +1667,7 @@ s32 mario_execute_moving_action(struct MarioState *m) {
         case ACT_SIDE_FLIP_LAND:           cancel = act_side_flip_land(m);           break;
         case ACT_HOLD_JUMP_LAND:           cancel = act_hold_jump_land(m);           break;
         case ACT_HOLD_FREEFALL_LAND:       cancel = act_hold_freefall_land(m);       break;
+        case ACT_LONG_JUMP_LAND:           cancel = act_long_jump_land(m);           break;
     }
     /* clang-format on */
 

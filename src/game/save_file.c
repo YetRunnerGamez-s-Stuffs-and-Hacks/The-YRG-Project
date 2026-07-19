@@ -329,10 +329,20 @@ void save_file_load_all(void) {
  * Creates a temporary save file in order to function like a demo.
  */
 void save_file_create_temporary_file(void) {
+    s32 i;
+
+    for (i = 0; i < NUM_SAVE_FILES; i++) {
+        bcopy(&gSaveBuffer.files[i][0],
+              &gSaveBuffer.files[i][1],
+              sizeof(gSaveBuffer.files[i][0]));
+    }
+
+    bcopy(&gSaveBuffer.menuData[0],
+          &gSaveBuffer.menuData[1],
+          sizeof(gSaveBuffer.menuData[0]));
+
     gMainMenuDataModified = FALSE;
     gSaveFileModified = FALSE;
-
-    bzero(&gSaveBuffer, sizeof(gSaveBuffer));
 }
 
 /**

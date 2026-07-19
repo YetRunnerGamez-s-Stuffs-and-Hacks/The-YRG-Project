@@ -24,6 +24,8 @@
 #include "course_table.h"
 #include "object_helpers.h"
 
+s16 sCourseComplete = FALSE;
+
 #define PLAY_MODE_NORMAL 0
 #define PLAY_MODE_PAUSED 2
 #define PLAY_MODE_CHANGE_AREA 3
@@ -488,11 +490,12 @@ s16 level_trigger_warp(struct MarioState *m, s32 warpOp) {
                 break;
 
             case WARP_OP_STAR_EXIT:
-                sDelayedWarpTimer = 40;
-                sSourceWarpNodeId = WARP_NODE_SUCCESS;
-                gSavedCourseNum = COURSE_NONE;
-                play_transition(WARP_TRANSITION_FADE_INTO_MARIO, 0x28, 0x00, 0x00, 0x00);
-                break;
+    gCourseComplete = TRUE;
+    sDelayedWarpTimer = 40;
+    sSourceWarpNodeId = WARP_NODE_SUCCESS;
+    gSavedCourseNum = COURSE_NONE;
+    play_transition(WARP_TRANSITION_FADE_INTO_MARIO, 0x28, 0x00, 0x00, 0x00);
+    break;
 
             case WARP_OP_DEATH:
                 if (m->numLives == 0) {

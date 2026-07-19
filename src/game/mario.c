@@ -821,6 +821,18 @@ static u32 set_mario_action_airborne(struct MarioState *m, u32 action, u32 actio
             }
             mario_set_forward_vel(m, forwardVel);
             break;
+            
+        case ACT_LONG_JUMP:
+            m->marioObj->header.gfx.animInfo.animID = -1;
+            set_mario_y_vel_based_on_fspeed(m, 30.0f, 0.0f);
+            m->marioObj->oMarioLongJumpIsSlow = m->forwardVel > 16.0f ? FALSE : TRUE;
+
+            //! (BLJ's) This properly handles long jumps from getting forward speed with
+            //  too much velocity, but misses backwards longs allowing high negative speeds.
+            if ((m->forwardVel *= 1.5f) > 48.0f) {
+                m->forwardVel = 48.0f;
+            }
+            break;
     }
 
     m->peakHeight = m->pos[1];
@@ -1618,9 +1630,9 @@ void init_mario_from_save_file(void) {
     gMarioState->controller = &gControllers[0];
     gMarioState->animList = &gPlayerAnimsBuf[0];
 
-    gMarioState->numCoins = 2;
+    gMarioState->numCoins = 0;
     gMarioState->numStars =
-        save_file_get_total_star_count(gCurrSaveFileNum - 1, COURSE_MIN - 1, COURSE_MAX - 1) + 1;
+        save_file_get_total_star_count(gCurrSaveFileNum - 1, COURSE_MIN - 1, COURSE_MAX - 1);
     gMarioState->numKeys = 0;
 
     gMarioState->numLives = 2;
@@ -1629,7 +1641,7 @@ void init_mario_from_save_file(void) {
     gMarioState->prevNumStarsForDialog = gMarioState->numStars;
     gMarioState->unkB0 = 0xBD;
 
-    gHudDisplay.coins = 2;
+    gHudDisplay.coins = 0;
     gHudDisplay.wedges = 8;
 
     gMessageHasBeenRead = 0;

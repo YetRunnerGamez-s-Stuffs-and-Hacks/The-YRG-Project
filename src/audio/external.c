@@ -268,7 +268,13 @@ u8 sBackgroundMusicDefaultVolume[] = {
     70,  // SEQ_EVENT_CUTSCENE_ENDING
     65,  // SEQ_MENU_FILE_SELECT
     0,   // SEQ_EVENT_CUTSCENE_LAKITU (not in JP)
+    80,  // SEQ_BOWSER_HALLWAY_SCREAM_LEFT
+    80,  // SEQ_BOWSER_HALLWAY_SCREAM_RIGHT
+    70,  // SEQ_FLOOR_2B
+    70, // SEQ_FLOOR_3B
+    88
 };
+
 
 STATIC_ASSERT(ARRAY_COUNT(sBackgroundMusicDefaultVolume) == SEQ_COUNT,
               "change this array if you are adding sequences");

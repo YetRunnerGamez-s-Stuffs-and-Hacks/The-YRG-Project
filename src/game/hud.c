@@ -310,5 +310,8 @@ void render_hud(void) {
         if (hudDisplayFlags & HUD_DISPLAY_FLAG_POWER) {
             render_hud_power_meter();
         }
+        #ifdef DEBUG
+        print_text(20, 40, "DEBUG");
+        #endif
     }
 }

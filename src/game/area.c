@@ -36,6 +36,8 @@ s16 gSavedCourseNum;
 s16 gMenuOptSelectIndex;
 s16 gSaveOptSelectIndex;
 
+s16 gCourseComplete = FALSE;
+
 struct SpawnInfo *gMarioSpawnInfo = &gPlayerSpawnInfos[0];
 struct GraphNode **gLoadedGraphNodes = D_8033A160;
 struct Area *gAreas = gAreaData;

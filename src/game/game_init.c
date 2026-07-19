@@ -488,8 +488,9 @@ void thread5_game_loop(UNUSED void *arg) {
     CN_DEBUG_PRINTF(("start gfx thread\n"));
 
     setup_game_memory();
-
+    
     save_file_create_temporary_file();
+    
 
     CN_DEBUG_PRINTF(("init ctrl\n"));
     init_controllers();

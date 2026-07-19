@@ -2934,3 +2934,24 @@ const BehaviorScript bhvMips[] = {
     END_LOOP(),
 };
 
+/*
+const BehaviorScript bhvMenuButton[] = {
+    BEGIN(OBJ_LIST_LEVEL),
+    OR_INT(oFlags, OBJ_FLAG_UPDATE_GFX_POS_AND_ANGLE),
+    CALL_NATIVE(bhv_menu_button_init),
+    BEGIN_LOOP(),
+        SET_INT(oIntangibleTimer, 0),
+        CALL_NATIVE(bhv_menu_button_loop),
+    END_LOOP(),
+};
+
+const BehaviorScript bhvMenuButtonManager[] = {
+    BEGIN(OBJ_LIST_LEVEL),
+    OR_INT(oFlags, (OBJ_FLAG_SET_THROW_MATRIX_FROM_TRANSFORM | OBJ_FLAG_0020 | OBJ_FLAG_UPDATE_GFX_POS_AND_ANGLE)),
+    CALL_NATIVE(bhv_menu_button_manager_init),
+    BEGIN_LOOP(),
+        SET_INT(oIntangibleTimer, 0),
+        CALL_NATIVE(bhv_menu_button_manager_loop),
+    END_LOOP(),
+};
+*/

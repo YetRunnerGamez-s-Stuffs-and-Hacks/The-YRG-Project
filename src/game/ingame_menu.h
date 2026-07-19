@@ -28,11 +28,14 @@
 enum MenuMode {
     MENU_MODE_NONE = -1,
     MENU_MODE_UNUSED_0,
-    MENU_MODE_RENDER_PAUSE_SCREEN
+    MENU_MODE_RENDER_PAUSE_SCREEN,
+    MENU_MODE_RENDER_COURSE_COMPLETE_SCREEN,
+    MENU_MODE_UNUSED_3
 };
 
 extern s8 gDialogCourseActNum;
 extern s8 gHudFlash;
+extern s16 gMenuMode;
 
 struct DialogEntry {
     /*0x00*/ u32 unused;
@@ -127,5 +130,13 @@ void print_credits_str_ascii(s16 x, s16 y, const char *str);
 void set_cutscene_message(s16 xOffset, s16 yOffset, s16 msgIndex, s16 msgDuration);
 void do_cutscene_handler(void);
 s16 render_menus_and_dialogs(void);
+
+extern s16 gCourseCompleteScreenTimer;
+extern s16 gCourseCompleteCoins;
+extern s16 gCourseCompleteCoinsEqual;
+
+void render_course_complete_lvl_info_and_hud_str(void);
+void shade_screen(void);
+void print_peach_letter_message(void);
 
 #endif // INGAME_MENU_H

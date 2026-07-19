@@ -118,7 +118,7 @@ const LevelScript level_castle_inside_entry[] = {
         TERRAIN(/*terrainData*/ castle_inside_collision),
         ROOMS(/*surfaceRooms*/ castle_inside_collision_rooms),
         SHOW_DIALOG(/*index*/ 0x00, DIALOG_021),
-        SET_BACKGROUND_MUSIC(/*settingsPreset*/ 0x0001, /*seq*/ SEQ_LEVEL_INSIDE_CASTLE),
+        SET_BACKGROUND_MUSIC(/*settingsPreset*/ 0x0001, /*seq*/ SEQ_FLOOR_3B),
         TERRAIN_TYPE(/*terrainType*/ TERRAIN_STONE),
     END_AREA(),
 

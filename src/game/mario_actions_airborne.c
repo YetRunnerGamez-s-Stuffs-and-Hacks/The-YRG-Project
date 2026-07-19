@@ -120,10 +120,12 @@ s32 check_horizontal_wind(struct MarioState *m) {
 }
 
 void update_air_with_turn(struct MarioState *m) {
+    f32 dragThreshold;
     s16 intendedDYaw;
     f32 intendedMag;
 
     if (!check_horizontal_wind(m)) {
+        dragThreshold = m->action == ACT_LONG_JUMP ? 48.0f : 32.0f;
         m->forwardVel = approach_f32(m->forwardVel, 0.0f, 0.35f, 0.35f);
 
         if (m->input & INPUT_NONZERO_ANALOG) {
@@ -135,7 +137,7 @@ void update_air_with_turn(struct MarioState *m) {
         }
 
         //! Uncapped air speed. Net positive when moving forward.
-        if (m->forwardVel > 32.0f) {
+        if (m->forwardVel > dragThreshold) {
             m->forwardVel -= 1.0f;
         }
         if (m->forwardVel < -16.0f) {
@@ -149,10 +151,12 @@ void update_air_with_turn(struct MarioState *m) {
 
 void update_air_without_turn(struct MarioState *m) {
     f32 sidewaysSpeed = 0.0f;
+    f32 dragThreshold;
     s16 intendedDYaw;
     f32 intendedMag;
 
-    if (!check_horizontal_wind(m)) { // same thing
+    if (!check_horizontal_wind(m)) {
+        dragThreshold = m->action == ACT_LONG_JUMP ? 48.0f : 32.0f;
         m->forwardVel = approach_f32(m->forwardVel, 0.0f, 0.35f, 0.35f);
 
         if (m->input & INPUT_NONZERO_ANALOG) {
@@ -164,7 +168,7 @@ void update_air_without_turn(struct MarioState *m) {
         }
 
         //! Uncapped air speed. Net positive when moving forward.
-        if (m->forwardVel > 32.0f) {
+        if (m->forwardVel > dragThreshold) {
             m->forwardVel -= 1.0f;
         }
         if (m->forwardVel < -16.0f) {
@@ -506,6 +510,25 @@ s32 act_wall_kick_air(struct MarioState *m) {
 
     play_mario_jump_sound(m);
     common_air_action_step(m, ACT_JUMP_LAND, MARIO_ANIM_SLIDEJUMP, AIR_STEP_CHECK_LEDGE_GRAB);
+    return FALSE;
+}
+
+s32 act_long_jump(struct MarioState *m) {
+    s32 animation;
+    if (!m->marioObj->oMarioLongJumpIsSlow) {
+        animation = MARIO_ANIM_FAST_LONGJUMP;
+    } else {
+        animation = MARIO_ANIM_SLOW_LONGJUMP;
+    }
+
+    play_mario_sound(m, SOUND_ACTION_TERRAIN_JUMP, SOUND_MARIO_HERE_WE_GO);
+
+    if (m->floor->type == SURFACE_VERTICAL_WIND && m->actionState == 0) {
+        play_sound(SOUND_MARIO_HERE_WE_GO, m->marioObj->header.gfx.cameraToObject);
+        m->actionState = 1;
+    }
+
+    common_air_action_step(m, ACT_LONG_JUMP_LAND, animation, AIR_STEP_CHECK_LEDGE_GRAB);
     return FALSE;
 }
 
@@ -1489,6 +1512,7 @@ s32 mario_execute_airborne_action(struct MarioState *m) {
         case ACT_HOLD_FREEFALL:        cancel = act_hold_freefall(m);        break;
         case ACT_SIDE_FLIP:            cancel = act_side_flip(m);            break;
         case ACT_WALL_KICK_AIR:        cancel = act_wall_kick_air(m);        break;
+        case ACT_LONG_JUMP:            cancel = act_long_jump(m);            break;
         case ACT_TWIRLING:             cancel = act_twirling(m);             break;
         case ACT_WATER_JUMP:           cancel = act_water_jump(m);           break;
         case ACT_HOLD_WATER_JUMP:      cancel = act_hold_water_jump(m);      break;

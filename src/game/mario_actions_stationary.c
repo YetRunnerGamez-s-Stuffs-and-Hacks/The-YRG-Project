@@ -635,6 +635,18 @@ s32 act_lava_boost_land(struct MarioState *m) {
     return FALSE;
 }
 
+s32 act_long_jump_land_stop(struct MarioState *m) {
+    m->input &= ~INPUT_B_PRESSED;
+    if (check_common_landing_cancels(m, ACT_JUMP)) {
+        return TRUE;
+    }
+
+    landing_step(m, !m->marioObj->oMarioLongJumpIsSlow ? MARIO_ANIM_CROUCH_FROM_FAST_LONGJUMP
+                                                       : MARIO_ANIM_CROUCH_FROM_SLOW_LONGJUMP,
+                 ACT_CROUCHING);
+    return FALSE;
+}
+
 s32 act_hold_jump_land_stop(struct MarioState *m) {
     if (m->marioObj->oInteractStatus & INT_STATUS_MARIO_DROP_OBJECT) {
         return drop_and_set_mario_action(m, ACT_IDLE, 0);
@@ -819,6 +831,7 @@ s32 mario_execute_stationary_action(struct MarioState *m) {
         case ACT_AIR_THROW_LAND:          cancel = act_air_throw_land(m);                   break;
         case ACT_LAVA_BOOST_LAND:         cancel = act_lava_boost_land(m);                  break;
         case ACT_TWIRL_LAND:              cancel = act_twirl_land(m);                       break;
+        case ACT_LONG_JUMP_LAND_STOP:     cancel = act_long_jump_land_stop(m);              break;
         case ACT_GROUND_POUND_LAND:       cancel = act_ground_pound_land(m);                break;
         case ACT_BRAKING_STOP:            cancel = act_braking_stop(m);                     break;
         case ACT_BUTT_SLIDE_STOP:         cancel = act_butt_slide_stop(m);                  break;
